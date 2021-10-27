@@ -1,0 +1,29 @@
+---
+
+# to create admin group
+# to add service account on all servers and part of admin group
+# add sudo settings with no password settings
+
+- hosts: all
+  tasks:
+   - ansible.builtin.group:
+      name: admin
+      state: present
+      gid: 2605
+
+   - ansible.builtin.user:
+      name: ser-account 
+      comment: Service Account
+      groups: admin
+  
+   - authorized_key:
+#Not with 2.10 this module name is changing  
+      user: ser-account
+      state: present
+      key: "{{ lookup('file', '/root/.ssh/id_rsa.pub') }}"
+
+   - ansible.builtin.lineinfile:
+       path: /etc/sudoers
+       insertafter: '^root'
+       line: ser-account  ALL=(ALL)  NOPASSWD:ALL 
+   
