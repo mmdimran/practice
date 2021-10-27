@@ -1,0 +1,45 @@
+--- 
+-  hosts: all
+   tasks:
+    - name: Disable selinux
+      selinux:
+       state: disabled
+
+    - name: Copy hosts file to destination
+      ansible.builtin.copy: 
+        src: /root/my-project/files/etchosts 
+        dest: /etc/hosts
+
+    - name: Disable firewalld services
+      ansible.builtin.systemd:
+        name: firewalld
+        enabled: no
+  
+    - name: Disable NetworkManager services
+      ansible.builtin.systemd:
+        name: NetworkManager
+        enabled: no
+
+    - name: Install some utilities
+      ansible.builtin.package:
+         name:
+           - tree
+           - vim
+         state: latest
+
+-  hosts: mac8
+   tasks:
+    - name: Update hostname for mac7
+      ansible.builtin.copy:
+        src: /root/my-project/files/hostname.mac8
+        dest: /etc/hostname      
+
+-  hosts: mac8
+   tasks:
+    - name: Update hostname for mac8
+      ansible.builtin.copy:
+        src: /root/my-project/files/hostname.mac8
+        dest: /etc/hostname
+
+
+# END
